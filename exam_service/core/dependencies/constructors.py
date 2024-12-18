@@ -2,17 +2,14 @@ from json import loads as json_loads
 from typing import Any, AsyncGenerator, Generator
 from uuid import UUID
 
+from exam_service.core.config import AppConfig
+from exam_service.core.exceptions.abc import UnauthorizedException
+from exam_service.core.security import Encryptor
 from jwt import InvalidTokenError
 from redis.asyncio import ConnectionPool, Redis
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-
-from auth_service.core.config import AppConfig
-from auth_service.core.exceptions.abc import UnauthorizedException
-from auth_service.core.security import Encryptor
-from auth_service.lib.schemas.auth import TokenRedisData
-from auth_service.lib.schemas.enums.redis import AuthRedisKeyType
 
 
 def db_engine(database_url: str) -> AsyncEngine:
@@ -58,13 +55,6 @@ def app_config() -> AppConfig:
     return AppConfig.from_env()
 
 
-def encryptor(config: AppConfig) -> Encryptor:
-    return Encryptor(
-        secret_key=config.security.secret_key,
-        jwt_algorithm=config.jwt.algorithm,
-        expire_minutes=config.jwt.access_token_expire_minutes,
-    )
-
 
 async def redis_pool(redis_url: str) -> AsyncGenerator[ConnectionPool, None]:
     pool = ConnectionPool.from_url(redis_url)
@@ -79,15 +69,6 @@ async def redis_conn(pool: ConnectionPool) -> AsyncGenerator[Redis, None]:
     finally:
         await conn.aclose()
 
-
-async def get_token_data(encryptor: Encryptor, redis: Redis, token: str) -> TokenRedisData:
-    payload = _decode_jwt(encryptor, token)
-    str_data = await redis.get(AuthRedisKeyType.access.format(payload.get("sub")))
-
-    if str_data is None:
-        raise UnauthorizedException(detail_="Invalid token")
-
-    return TokenRedisData.model_construct(**json_loads(str_data))
 
 
 def get_refresh_token(encryptor: Encryptor, token: str) -> UUID:

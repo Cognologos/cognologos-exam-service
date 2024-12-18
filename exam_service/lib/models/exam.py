@@ -10,4 +10,3 @@ class ExamModel(AbstractModel):
     name: Mapped[str]
     description: Mapped[str | None]
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
-

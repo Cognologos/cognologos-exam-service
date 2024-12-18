@@ -1,14 +1,12 @@
 from typing import Annotated, Any, AsyncGenerator
 from uuid import UUID
 
+from exam_service.core.config import AppConfig
 from fastapi import Cookie, Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from redis.asyncio import ConnectionPool, Redis as AbstractRedis
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
-
-from auth_service.core.config import AppConfig
-from auth_service.lib.schemas.auth import TokenRedisData
 
 from ..security import Encryptor
 from . import constructors as app_depends
@@ -61,34 +59,13 @@ async def redis_conn(
         raise RuntimeError("Redis session not closed (redis dependency generator is not closed).")
 
 
-def encryptor(config: Annotated[AppConfig, Depends(app_depends.app_config)]) -> Encryptor:
-    return app_depends.encryptor(config)
-
-
 def get_client_host(request: Request) -> str:
     client = request.client
     return client.host if client else ""
 
 
-async def get_token_data(
-    encryptor: Annotated[Encryptor, Depends(encryptor)],
-    redis: Annotated[AbstractRedis, Depends(redis_conn)],
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(HTTPBearer())],
-) -> TokenRedisData:
-    return await app_depends.get_token_data(encryptor, redis, credentials.credentials)
-
-
-def get_refresh_token(
-    encryptor: Annotated[Encryptor, Depends(encryptor)],
-    refresh_token: Annotated[str | None, Cookie()],
-) -> UUID:
-    return app_depends.get_refresh_token(encryptor, refresh_token or "")
-
 
 ClientHostDependency = Annotated[str, Depends(get_client_host)]
 UserAgentDependency = Annotated[str, Header()]
-TokenDataDependency = Annotated[TokenRedisData, Depends(get_token_data)]
-RefreshTokenDependency = Annotated[UUID, Depends(get_refresh_token)]
-EncryptorDependency = Annotated[Encryptor, Depends(encryptor)]
 DatabaseDependency = Annotated[AsyncSession, Depends(db_session)]
 RedisDependency = Annotated[AbstractRedis, Depends(redis_conn)]
