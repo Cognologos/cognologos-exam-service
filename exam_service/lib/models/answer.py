@@ -1,11 +1,7 @@
 from sqlalchemy import ForeignKey, Integer
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import TYPE_CHECKING
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .abc import AbstractModel
-
-if TYPE_CHECKING:
-    from .result import ResultModel
 
 
 class AnswerModel(AbstractModel):
@@ -14,4 +10,3 @@ class AnswerModel(AbstractModel):
     question_id: Mapped[int] = mapped_column(ForeignKey("questions.id"))
     result_id: Mapped[int] = mapped_column(ForeignKey("results.id"))
     answer: Mapped[str]
-    results: Mapped[list["ResultModel"]] = relationship("ResultModel", back_populates="answers")

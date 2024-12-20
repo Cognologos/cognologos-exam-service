@@ -6,11 +6,12 @@ from logging.config import fileConfig
 from os import environ
 
 from alembic import context
-from exam_service.lib.models import *  # noqa
-from exam_service.lib.models.abc import AbstractModel
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine
+
+from exam_service.lib.models import *  # noqa
+from exam_service.lib.models.abc import AbstractModel
 
 
 # this is the Alembic Config object, which provides
@@ -30,6 +31,8 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = AbstractModel.metadata
+
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
