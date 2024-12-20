@@ -1,12 +1,13 @@
 from typing import Annotated, Any, AsyncGenerator
 from uuid import UUID
 
-from exam_service.core.config import AppConfig
 from fastapi import Cookie, Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from redis.asyncio import ConnectionPool, Redis as AbstractRedis
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
+
+from exam_service.core.config import AppConfig
 
 from ..security import Encryptor
 from . import constructors as app_depends
@@ -62,7 +63,6 @@ async def redis_conn(
 def get_client_host(request: Request) -> str:
     client = request.client
     return client.host if client else ""
-
 
 
 ClientHostDependency = Annotated[str, Depends(get_client_host)]

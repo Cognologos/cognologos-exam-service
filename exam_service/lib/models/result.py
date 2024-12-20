@@ -1,9 +1,12 @@
-from sqlalchemy import ForeignKey, Integer, DateTime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import TYPE_CHECKING
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
+
+from sqlalchemy import DateTime, ForeignKey, Integer
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .abc import AbstractModel
+
+
 if TYPE_CHECKING:
     from .answer import AnswerModel
     from .exam import ExamModel

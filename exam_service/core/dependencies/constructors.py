@@ -2,14 +2,15 @@ from json import loads as json_loads
 from typing import Any, AsyncGenerator, Generator
 from uuid import UUID
 
-from exam_service.core.config import AppConfig
-from exam_service.core.exceptions.abc import UnauthorizedException
-from exam_service.core.security import Encryptor
 from jwt import InvalidTokenError
 from redis.asyncio import ConnectionPool, Redis
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+
+from exam_service.core.config import AppConfig
+from exam_service.core.exceptions.abc import UnauthorizedException
+from exam_service.core.security import Encryptor
 
 
 def db_engine(database_url: str) -> AsyncEngine:
@@ -55,7 +56,6 @@ def app_config() -> AppConfig:
     return AppConfig.from_env()
 
 
-
 async def redis_pool(redis_url: str) -> AsyncGenerator[ConnectionPool, None]:
     pool = ConnectionPool.from_url(redis_url)
     yield pool
@@ -68,7 +68,6 @@ async def redis_conn(pool: ConnectionPool) -> AsyncGenerator[Redis, None]:
         yield conn
     finally:
         await conn.aclose()
-
 
 
 def get_refresh_token(encryptor: Encryptor, token: str) -> UUID:
