@@ -14,4 +14,4 @@ class AnswerModel(AbstractModel):
     question_id: Mapped[int] = mapped_column(ForeignKey("questions.id"))
     result_id: Mapped[int] = mapped_column(ForeignKey("results.id"))
     answer: Mapped[str]
-    results: Mapped[list["ResultModel"]] = relationship("ResultModel", back_populates="results")
+    results: Mapped[list["ResultModel"]] = relationship("ResultModel", back_populates="answers")

@@ -6,6 +6,7 @@ from .abc import AbstractModel
 
 if TYPE_CHECKING:
     from .question import QuestionModel
+    from .result import ResultModel
 
 
 class ExamModel(AbstractModel):
@@ -14,4 +15,9 @@ class ExamModel(AbstractModel):
     name: Mapped[str]
     description: Mapped[str | None]
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
-    questions: Mapped[list["QuestionModel"]] = relationship("QuestionModel", back_populates="exam", cascade="all, delete-orphan")
+    questions: Mapped[list["QuestionModel"]] = relationship(
+        "QuestionModel", back_populates="exam", cascade="all, delete-orphan"
+        )
+    results: Mapped[list["ResultModel"]] = relationship(
+        "ResultModel", back_populates="exam", cascade="all, delete-orphan"
+    )
