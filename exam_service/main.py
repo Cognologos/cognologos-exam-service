@@ -3,6 +3,7 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
+from httpx import HTTPStatusError
 
 from exam_service.core.config import AppConfig
 from exam_service.core.dependencies import constructors as app_depends, fastapi as stubs
@@ -28,8 +29,16 @@ app = FastAPI(
 
 
 @app.exception_handler(AbstractException)
-async def http_exception_handler(request: Request, exc: HTTPException):
+async def http_abstract_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(status_code=exc.status_code, content={"error": True, "message": exc.detail})
+
+
+@app.exception_handler(HTTPStatusError)
+async def http_exception_handler(request: Request, exc: HTTPStatusError):
+    return JSONResponse(
+        status_code=exc.response.status_code,
+        content=exc.response.json(),
+    )
 
 
 app.include_router(router)

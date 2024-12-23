@@ -1,15 +1,15 @@
 from typing import Annotated, Any, AsyncGenerator
-from uuid import UUID
 
-from fastapi import Cookie, Depends, Header, Request
+from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from httpx import AsyncClient
 from redis.asyncio import ConnectionPool, Redis as AbstractRedis
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from exam_service.core.config import AppConfig
+from exam_service.lib.schemas.user import UserSchema
 
-from ..security import Encryptor
 from . import constructors as app_depends
 
 
@@ -65,7 +65,19 @@ def get_client_host(request: Request) -> str:
     return client.host if client else ""
 
 
+async def user_dependency(
+    config: Annotated[AppConfig, Depends(app_config_stub)],
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(HTTPBearer())],
+):
+    async with AsyncClient() as client:
+        headers = {"Authorization": f"Bearer {credentials.credentials}"}
+        response = await client.get(f"{config.services.auth_url}/api/v1/users/me", headers=headers)
+        response.raise_for_status()
+        return UserSchema.model_construct(**response.json())
+
+
 ClientHostDependency = Annotated[str, Depends(get_client_host)]
+UserDependency = Annotated[UserSchema, Depends(user_dependency)]
 UserAgentDependency = Annotated[str, Header()]
 DatabaseDependency = Annotated[AsyncSession, Depends(db_session)]
 RedisDependency = Annotated[AbstractRedis, Depends(redis_conn)]
