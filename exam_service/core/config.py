@@ -2,7 +2,6 @@ import logging
 from os import environ
 from typing import Any, Self
 
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
