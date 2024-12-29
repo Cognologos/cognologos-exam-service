@@ -9,8 +9,9 @@ class BaseExamSchema(BaseSchema):
 
 class ExamCreateSchema(BaseExamSchema):
     name: str
-    description: str 
+    description: str
     category_id: int
+
 
 class ExamSchema(BaseExamSchema):
     id: int

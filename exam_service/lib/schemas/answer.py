@@ -9,9 +9,8 @@ class AnswerCreateSchema(BaseAnswerSchema):
     answer: str
 
 
-class AnswersSchema(BaseAnswerSchema):
+class AnswerSchema(BaseAnswerSchema):
     id: int
     question_id: int
     result_id: int
     answer: str
-    

@@ -10,7 +10,7 @@ class QuestionCreateSchema(BaseQuestionSchema):
     text: str
 
 
-class QuestionsSchema(BaseQuestionSchema):
+class QuestionSchema(BaseQuestionSchema):
     id: int
     exam_id: int
     text: str

@@ -9,6 +9,6 @@ class CategoryCreateSchema(BaseCategorySchema):
     name: str
 
 
-class CategoriesSchema(BaseCategorySchema):
+class CategorySchema(BaseCategorySchema):
     id: int
     name: str
