@@ -12,7 +12,7 @@ class ExamCreateSchema(BaseExamSchema):
     description: str 
     category_id: int
 
-class ExamsSchema(BaseExamSchema):
+class ExamSchema(BaseExamSchema):
     id: int
     name: str
     description: bool

@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Integer
+from sqlalchemy import DateTime, ForeignKey, Integer, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .abc import AbstractModel
@@ -19,9 +19,6 @@ class ExamModel(AbstractModel):
     name: Mapped[str]
     description: Mapped[str | None]
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
-    )
     questions: Mapped[list["QuestionModel"]] = relationship(
         "QuestionModel", back_populates="exam", cascade="all, delete-orphan"
     )
@@ -29,3 +26,10 @@ class ExamModel(AbstractModel):
         "ResultModel", back_populates="exam", cascade="all, delete-orphan"
     )
     category: Mapped[list["CategoryModel"]] = relationship("CategoryModel")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        index=True,
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
