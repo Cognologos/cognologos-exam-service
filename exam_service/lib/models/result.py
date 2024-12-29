@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 class ResultModel(AbstractModel):
     __tablename__ = "results"
     id: Mapped[int] = mapped_column("id", Integer(), primary_key=True, autoincrement=True)
+    user_id: Mapped[int]
     exam_id: Mapped[int] = mapped_column(ForeignKey("exams.id"))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)

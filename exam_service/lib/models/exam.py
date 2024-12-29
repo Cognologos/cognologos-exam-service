@@ -18,6 +18,7 @@ class ExamModel(AbstractModel):
     id: Mapped[int] = mapped_column("id", Integer(), primary_key=True, autoincrement=True)
     name: Mapped[str]
     description: Mapped[str | None]
+    owner_id: Mapped[int]
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
     questions: Mapped[list["QuestionModel"]] = relationship(
         "QuestionModel", back_populates="exam", cascade="all, delete-orphan"
