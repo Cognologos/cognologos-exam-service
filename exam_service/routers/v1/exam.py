@@ -13,11 +13,11 @@ async def create_exam(db: DatabaseDependency, schema: ExamCreateSchema) -> ExamS
     return await exam_db.create_exam(db, schema=schema)
 
 
-@router.get("/get_exam", response_model=ExamSchema)
+@router.get("/{exam_id}", response_model=ExamSchema)
 async def get_user(db: DatabaseDependency, exam_id: int) -> ExamSchema:
     return await exam_db.get_exam(db, exam_id=exam_id)
 
 
-@router.delete("/get_exam", status_code=204)
+@router.delete("/{exam_id}", status_code=204)
 async def delete_exam(db: DatabaseDependency, exam_id: int) -> None:
     return await exam_db.delete_exam(db, exam_id=exam_id)
